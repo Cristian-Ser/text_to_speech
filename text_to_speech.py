@@ -1,21 +1,24 @@
 from gtts import gTTS
-from newspaper import Article
+from newspaper import Article as newsA
 
-def text_to_speech():
-    # asking for the url of the article
-    url = input('Introduce the URL of the article you want to turn into a speech')
 
-    # initializing the article by itself with newspaper3k
-    article = Article(url=url)
-    
-    # parsing the article (for that we have to download it first)
-    article.download()
-    article.parse()
+class ArticleHandler:
+    def __init__(self, article_url):
+        self.article_url = article_url
+        self.chosen_article = ''
 
-    # now we select the content we are interested in. In this case: title and text
-    title = article.title
-    text = article.text
+    def articleInit(self):
+        self.chosen_article = newsA(self.article_url)
+        self.chosen_article.download()
+        self.chosen_article.parse()
+        
+    def convert_to_audio(self):
+        content_to_convert = self.chosen_article.title + self.chosen_article.text
+        article_to_audio = gTTS(content_to_convert, lang='en')
+        article_to_audio.save(f'article_to_audio.mp3')
 
-    
+article_1 = ArticleHandler('https://abcnews.go.com/International/trump-putin-prepare-begin-ukraine-peace-talks-europe/story?id=118771634')
+article_1.articleInit()
+article_1.convert_to_audio()
 
 
